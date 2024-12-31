@@ -1,6 +1,8 @@
 'use server'
 
 import { auth } from "@clerk/nextjs/server"
+import axios from 'axios';
+
 
 export const getAurinkoAuthUrl = async (serviceType: 'Google' | 'Office365' ) => {
 
@@ -17,4 +19,49 @@ export const getAurinkoAuthUrl = async (serviceType: 'Google' | 'Office365' ) =>
     })
 
     return `https://api.aurinko.io/v1/auth/authorize?${params.toString()}`
+}
+
+export const getAurinkoAuthToken = async (code :string ) => {
+    try {
+        const res = await axios.post(`https://api.aurinko.io/v1/auth/token/${code}`,{},{
+            auth:{
+                username : process.env.AURINKO_CLIENT_ID as string,
+                password : process.env.AURINKO_CLIENT_SECRET as string,
+            }
+        })
+        return res.data as {
+            accountId:number,
+            accessToken:string,
+            userId:string,
+            userSession:string
+
+        }
+    } catch (error) {
+        if(axios.isAxiosError(error)){
+            console.error(error.response?.data);
+        }else{
+            console.error(error);
+        }
+    }    
+
+}
+
+export const getAccountDetails = async (token:string) => {
+    try {
+        const res = await axios.get('https://api.aurinko.io/v1/account',{
+            headers:{
+                'Authorization':`Bearer ${token}`
+            }
+        });
+        return res.data as {
+            name:string,
+            email:string
+        }
+    } catch (error) {
+        if(axios.isAxiosError(error)){
+            console.error(error.response?.data);
+        }else{
+            console.error(error);
+        }
+    }
 }
