@@ -29,6 +29,7 @@ export const getAurinkoAuthToken = async (code :string ) => {
                 password : process.env.AURINKO_CLIENT_SECRET as string,
             }
         })
+        console.log('response',res);
         return res.data as {
             accountId:number,
             accessToken:string,
