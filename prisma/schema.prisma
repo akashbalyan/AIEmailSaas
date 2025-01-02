@@ -16,7 +16,7 @@ model User {
   emailAddress String @unique
   firstName String
   lastName String
-  imageUrl String
+  imageUrl String?
   accounts Account[]
 }
 
@@ -27,5 +27,6 @@ model Account {
   emailAddress String
   accessToken String @unique
 
+  nextDeltaToken String?
   user User @relation(fields:[userId],references:[id])
 }

@@ -19,7 +19,7 @@ export const GET = async (req: NextRequest) => {
     const state = params.get('state');
     const scope = params.get('scope');
 
-    console.log('Params', { code, state, scope });
+    //console.log('Params', { code, state, scope });
 
     // Validate required parameters
     if (!code || !state || !scope) {
