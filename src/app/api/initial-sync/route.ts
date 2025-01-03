@@ -1,7 +1,9 @@
 // /api/initial-sync
 
 import { Account } from "@/lib/account";
+import { syncEmailsToDatabase } from "@/lib/sync-to-db";
 import { db } from "@/server/db";
+import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import { useId } from "react";
 
@@ -24,17 +26,18 @@ export const POST = async (req:NextRequest)=>{
     if(!response) return NextResponse.json({message:'Failed to perform initial sync',status:500});
     const { emails, deltaToken } = response;
 
-    console.log(emails);
-    // db.account.update({
-    //     where:{
-    //         id:accountId
-    //     },
-    //     data:{
-    //         nextDeltaToken:deltaToken
-    //     }
-    // });
+    //console.log(emails);
+    console.log("Delta Token - ",deltaToken);
+    await db.account.update({
+        where:{
+            id:accountId
+        },
+        data:{
+            nextDeltaToken:deltaToken
+        }
+    });
 
-    //await syncEmailsToDatabase(emails,accountId)
+    await syncEmailsToDatabase(emails,accountId)
     console.log('Sync completed, Delta Token - ',deltaToken);
 
     return NextResponse.json({success:true,staus:200});
